@@ -23,11 +23,6 @@
 #define	debugPARAM					(debugFLAG_GLOBAL & debugFLAG & 0x4000)
 #define	debugRESULT					(debugFLAG_GLOBAL & debugFLAG & 0x8000)
 
-/* ##################################### Developer notes ###########################################
-	Add auto ranging support if sum of raw values close to 0 or above 100,000
-	Scale gain factor up or down...
-*/
-
 // ############################################# Macros ############################################
 
 #define	ltr329alsI2C_LOGIC			1					// 0 = delay, 1= stretch, 2= stages
