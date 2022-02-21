@@ -103,7 +103,7 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
 	IF_PRINT(debugCONFIG && ioB1GET(ioMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\n", Xcur, Xmax, gain, time, rate);
 
 	if (OUTSIDE(0, gain, 7, int) || OUTSIDE(0, time, 7, int) || OUTSIDE(0, rate, 7, int) || gain==4 || gain==5)
-		ERR_RETURN("Invalid gain / time / rate specified", erSCRIPT_INV_PARA);
+		ERR_RETURN("Invalid gain / time / rate specified", erINVALID_PARA);
 
 	int iRV = ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.control.gain = gain);
 	if (iRV == erSUCCESS){
