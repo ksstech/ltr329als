@@ -64,7 +64,7 @@ int	ltr329alsReadHdlr(epw_t * psEWP) {
 		ltr329alsReadReg(Reg+ltr329alsDATA_CH1_0, (uint8_t *) &sLTR329ALS.Reg.ch[Reg]);
 	}
 	IF_SYSTIMER_STOP(debugTIMING, stLTR329ALS);
-	IF_PRINT(debugCONVERT, "ltr329als  [ %-'B ]\n", 4, sLTR329ALS.Reg.ch);
+	IF_P(debugCONVERT, "ltr329als  [ %-'B ]\n", 4, sLTR329ALS.Reg.ch);
 	x64_t X64;
 	// Convert & update pressure/altitude sensor
 	uint16_t data_ch0, data_ch1;
@@ -100,7 +100,7 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
 	int gain = psR->para.x32[AI][0].i32;
 	int time = psR->para.x32[AI][1].i32;
 	int rate = psR->para.x32[AI][2].i32;
-	IF_PRINT(debugCONFIG && ioB1GET(ioMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\n", Xcur, Xmax, gain, time, rate);
+	IF_P(debugCONFIG && ioB1GET(ioMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\n", Xcur, Xmax, gain, time, rate);
 
 	if (OUTSIDE(0, gain, 7, int) || OUTSIDE(0, time, 7, int) || OUTSIDE(0, rate, 7, int) || gain==4 || gain==5)
 		ERR_RETURN("Invalid gain / time / rate specified", erINVALID_PARA);
@@ -174,15 +174,15 @@ int	ltr329alsDiags(i2c_di_t * psI2C_DI) { return erSUCCESS; }
 
 void ltr329alsReportAll(void) {
 	halI2C_DeviceReport(sLTR329ALS.psI2C);
-	PRINT("\tCONTROL: 0x%0X  gain=%d (%dx)  mode=%s\n", sLTR329ALS.Reg.CONTROL,
+	P("\tCONTROL: 0x%0X  gain=%d (%dx)  mode=%s\n", sLTR329ALS.Reg.CONTROL,
 			sLTR329ALS.Reg.control.gain, ltr329Gain[sLTR329ALS.Reg.control.gain],
 			sLTR329ALS.Reg.control.mode ? "Active" : "Standby");
-	PRINT("\tMEAS_RATE: 0x%0X  time=%d (%fmS)  rate=%d (%dmS)\n", sLTR329ALS.Reg.MEAS_RATE,
+	P("\tMEAS_RATE: 0x%0X  time=%d (%fmS)  rate=%d (%dmS)\n", sLTR329ALS.Reg.MEAS_RATE,
 			sLTR329ALS.Reg.meas_rate.time, ltr329IntgTime[sLTR329ALS.Reg.meas_rate.time]*100.0,
 			sLTR329ALS.Reg.meas_rate.rate, ltr329MeasRate[sLTR329ALS.Reg.meas_rate.rate]);
-	PRINT("\tMANUFAC_ID: 0x%0X  PART=%d  REV=%d\n", sLTR329ALS.Reg.MANUFAC_ID,
+	P("\tMANUFAC_ID: 0x%0X  PART=%d  REV=%d\n", sLTR329ALS.Reg.MANUFAC_ID,
 			sLTR329ALS.Reg.part_id.part, sLTR329ALS.Reg.part_id.rev);
-	PRINT("\tSTATUS: 0x%0X  valid=%d  gain=%d  intr=%d  data=%d\n", sLTR329ALS.Reg.STATUS,
+	P("\tSTATUS: 0x%0X  valid=%d  gain=%d  intr=%d  data=%d\n", sLTR329ALS.Reg.STATUS,
 			sLTR329ALS.Reg.status.valid, sLTR329ALS.Reg.status.gain,
 			sLTR329ALS.Reg.status.intr, sLTR329ALS.Reg.status.data);
 }
