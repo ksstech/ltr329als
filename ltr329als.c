@@ -102,16 +102,17 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
 	int rate = psR->para.x32[AI][2].i32;
 	IF_P(debugCONFIG && ioB1GET(ioMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\n", Xcur, Xmax, gain, time, rate);
 
-	if (OUTSIDE(0, gain, 7, int) || OUTSIDE(0, time, 7, int) || OUTSIDE(0, rate, 7, int) || gain==4 || gain==5)
-		ERR_RETURN("Invalid gain / time / rate specified", erINVALID_PARA);
-
-	int iRV = ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.control.gain = gain);
-	if (iRV == erSUCCESS){
-		sLTR329ALS.Reg.meas_rate.time = time;
-		sLTR329ALS.Reg.meas_rate.rate = rate;
-		iRV = ltr329alsWriteReg(ltr329alsMEAS_RATE, sLTR329ALS.Reg.MEAS_RATE);
+	if (OUTSIDE(0, gain, 7, int) ||
+		OUTSIDE(0, time, 7, int) ||
+		OUTSIDE(0, rate, 7, int) ||
+		gain==4 || gain==5) {
+		RETURN_MX("Invalid gain / time / rate specified", erINVALID_PARA);
 	}
-	return iRV;
+	int iRV = ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.control.gain = gain);
+	IF_RETURN_X(iRV != erSUCCESS, iRV);
+	sLTR329ALS.Reg.meas_rate.time = time;
+	sLTR329ALS.Reg.meas_rate.rate = rate;
+	return ltr329alsWriteReg(ltr329alsMEAS_RATE, sLTR329ALS.Reg.MEAS_RATE);
 }
 
 // ################### Identification, Diagnostics & Configuration functions #######################
@@ -126,15 +127,13 @@ int	ltr329alsIdentify(i2c_di_t * psI2C_DI) {
 	psI2C_DI->Test = 1;
 	sLTR329ALS.psI2C = psI2C_DI;
 	int iRV = ltr329alsReadReg(ltr329alsMANUFAC_ID, &sLTR329ALS.Reg.MANUFAC_ID);
-	if (iRV != erSUCCESS)
-		goto exit;
-	if (sLTR329ALS.Reg.MANUFAC_ID != 0x05)
-		goto exit_err;
+	IF_EXIT(iRV != erSUCCESS);
+	IF_GOTO(sLTR329ALS.Reg.MANUFAC_ID != 0x05, exit_err);
+
 	iRV = ltr329alsReadReg(ltr329alsPART_ID, &sLTR329ALS.Reg.PART_ID);
-	if (iRV != erSUCCESS)
-		goto exit;
-	if(sLTR329ALS.Reg.part_id.part != 0xA)
-		goto exit_err;
+	IF_EXIT(iRV != erSUCCESS);
+	IF_GOTO(sLTR329ALS.Reg.part_id.part != 0xA, exit_err);
+
 	psI2C_DI->Type		= i2cDEV_LTR329ALS;
 	psI2C_DI->Speed		= i2cSPEED_400;
 	psI2C_DI->DevIdx 	= 0;
