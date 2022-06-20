@@ -60,7 +60,7 @@ int	ltr329alsReadHdlr(epw_t * psEWP) {
 		ltr329alsReadReg(Reg+ltr329alsDATA_CH1_0, (uint8_t *) &sLTR329ALS.Reg.ch[Reg]);
 	}
 	IF_SYSTIMER_STOP(debugTIMING, stLTR329ALS);
-	IF_P(debugCONVERT, "ltr329als  [ %-`B ]\r\n", 4, sLTR329ALS.Reg.ch);
+//	P("ltr329als  [ %-`B ]\r\n", 4, sLTR329ALS.Reg.ch);
 	x64_t X64;
 	// Convert & update pressure/altitude sensor
 	uint16_t data_ch0, data_ch1;
@@ -96,7 +96,7 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
 	int gain = psR->para.x32[AI][0].i32;
 	int time = psR->para.x32[AI][1].i32;
 	int rate = psR->para.x32[AI][2].i32;
-	IF_P(debugCONFIG && ioB1GET(ioMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\r\n", Xcur, Xmax, gain, time, rate);
+	IF_P(debugTRACK && ioB1GET(ioMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\r\n", Xcur, Xmax, gain, time, rate);
 
 	if (OUTSIDE(0, gain, 7, int) ||
 		OUTSIDE(0, time, 7, int) ||
