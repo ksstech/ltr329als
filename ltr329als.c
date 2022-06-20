@@ -1,22 +1,18 @@
 /*
- * Copyright 2022 Andre M. Maree/KSS Technologies (Pty) Ltd.
+ * ltr329als.c
+ * Copyright (c) 2022 Andre M. Maree / KSS Technologies (Pty) Ltd.
  */
 
-#include	"ltr329als.h"
-#include	<string.h>
+#include "ltr329als.h"
+#include "hal_variables.h"
+#include "endpoints.h"
+#include "options.h"
+#include "printfx.h"
+#include "syslog.h"
+#include "systiming.h"
+#include "x_errors_events.h"
 
-#include	"hal_variables.h"
-#include	"endpoints.h"
-#include	"options.h"
-#include	"printfx.h"
-#include	"syslog.h"
-#include	"systiming.h"
-#include	"x_errors_events.h"
-
-#define	debugFLAG					0xF001
-
-#define	debugCONFIG					(debugFLAG & 0x0001)
-#define	debugCONVERT				(debugFLAG & 0x0002)
+#define	debugFLAG					0xF000
 
 #define	debugTIMING					(debugFLAG_GLOBAL & debugFLAG & 0x1000)
 #define	debugTRACK					(debugFLAG_GLOBAL & debugFLAG & 0x2000)
