@@ -75,7 +75,7 @@ int	ltr329alsReadHdlr(epw_t * psEWP) {
 	} else {
 		X64.x32[0].f32 = 0;
 	}
-	vCV_SetValue(&table_work[URI_LTR329ALS].var, X64);
+	vCV_SetValueRaw(&table_work[URI_LTR329ALS].var, X64);
 	return erSUCCESS;
 }
 #elif (ltr329alsI2C_LOGIC == 2)		// clock stretching
@@ -102,7 +102,7 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
 		OUTSIDE(0, time, 7) ||
 		OUTSIDE(0, rate, 7) ||
 		gain==4 || gain==5) {
-		RETURN_MX("Invalid gain / time / rate specified", erINVALID_PARA);
+		RETURN_MX("Invalid gain / time / rate specified", erINV_PARA);
 	}
 	int iRV = ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.control.gain = gain);
 	IF_RETURN_X(iRV != erSUCCESS, iRV);
@@ -147,16 +147,13 @@ int	ltr329alsConfig(i2c_di_t * psI2C_DI) {
 	ltr329alsReadReg(ltr329alsSTATUS, &sLTR329ALS.Reg.STATUS);
 
 	epw_t * psEWP = &table_work[URI_LTR329ALS];
-	psEWP->var.def.cv.vc = 1;
-	psEWP->var.def.cv.vs = vs32B;
-	psEWP->var.def.cv.vf = vfFXX;
-	psEWP->var.def.cv.vt = vtVALUE;
+	psEWP->var.def = SETDEF_CVAR(0, 0, vtVALUE, cvF32, 1);
 	psEWP->Tsns = psEWP->Rsns = LTR329ALS_T_SNS;
 	psEWP->uri = URI_LTR329ALS;
 
-#if (ltr329alsI2C_LOGIC == 3)
+	#if (ltr329alsI2C_LOGIC == 3)
 	sLTR329ALS.timer = xTimerCreate("ltr329als", pdMS_TO_TICKS(5), pdFALSE, NULL, ltr329alsTimerHdlr);
-#endif
+	#endif
 	IF_SYSTIMER_INIT(debugTIMING, stLTR329ALS, stMICROS, "LTR329", 500, 4000);
 	return erSUCCESS ;
 }
