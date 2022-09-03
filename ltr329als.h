@@ -15,6 +15,7 @@
 
 // ########################################### Macros ##############################################
 
+#define	ltr329alsI2C_LOGIC			1					// 0 = delay, 1= stretch, 2= stages
 
 // ######################################## Enumerations ###########################################
 
@@ -104,6 +105,10 @@ typedef struct __attribute__((packed)) {				// SI70006/13/14/20/xx TMP & RH sens
 		uint8_t u8Buf[sizeof(ltr329als_reg_t)];
 	};
 	uint8_t	spare[3];
+	#if (ltr329alsI2C_LOGIC == 3)		// 3 step read -> wait -> convert
+	TimerHandle_t th;
+	StaticTimer_t ts;
+	#endif
 } ltr329als_t;
 DUMB_STATIC_ASSERT(sizeof(ltr329als_t) == 20);
 

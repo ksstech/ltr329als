@@ -21,7 +21,6 @@
 
 // ############################################# Macros ############################################
 
-#define	ltr329alsI2C_LOGIC			1					// 0 = delay, 1= stretch, 2= stages
 
 // #################################### SI7006/13/20/21 Addresses ##################################
 
@@ -96,7 +95,7 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
 	int gain = psR->para.x32[AI][0].i32;
 	int time = psR->para.x32[AI][1].i32;
 	int rate = psR->para.x32[AI][2].i32;
-	IF_P(debugTRACK && ioB1GET(ioMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\r\n", Xcur, Xmax, gain, time, rate);
+	IF_P(debugTRACK && ioB1GET(dbgMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\r\n", Xcur, Xmax, gain, time, rate);
 
 	if (OUTSIDE(0, gain, 7) ||
 		OUTSIDE(0, time, 7) ||
@@ -152,7 +151,7 @@ int	ltr329alsConfig(i2c_di_t * psI2C_DI) {
 	psEWP->uri = URI_LTR329ALS;
 
 	#if (ltr329alsI2C_LOGIC == 3)
-	sLTR329ALS.timer = xTimerCreate("ltr329als", pdMS_TO_TICKS(5), pdFALSE, NULL, ltr329alsTimerHdlr);
+	sLTR329ALS.th = xTimerCreateStatic("ltr329als", pdMS_TO_TICKS(5), pdFALSE, NULL, ltr329alsTimerHdlr, &sLTR329ALS.ts);
 	#endif
 	IF_SYSTIMER_INIT(debugTIMING, stLTR329ALS, stMICROS, "LTR329", 500, 4000);
 	return erSUCCESS ;
