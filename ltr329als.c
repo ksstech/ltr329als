@@ -59,7 +59,7 @@ int	ltr329alsReadHdlr(epw_t * psEWP) {
 		ltr329alsReadReg(Reg+ltr329alsDATA_CH1_0, (uint8_t *) &sLTR329ALS.Reg.ch[Reg]);
 	}
 	IF_SYSTIMER_STOP(debugTIMING, stLTR329ALS);
-//	P("ltr329als  [ %-`B ]\r\n", 4, sLTR329ALS.Reg.ch);
+//	P("ltr329als  [ %-'B ]\r\n", 4, sLTR329ALS.Reg.ch);
 	x64_t X64;
 	// Convert & update pressure/altitude sensor
 	uint16_t data_ch0, data_ch1;
