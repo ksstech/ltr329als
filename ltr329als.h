@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-#include "endpoint_struct.h"
+//#include "endpoints.h"
 #include "hal_i2c.h"
 
 #ifdef __cplusplus
@@ -123,10 +123,10 @@ int	ltr329alsReConfig(i2c_di_t * psI2C_DI);
 int	ltr329alsDiags(i2c_di_t * psI2C_DI);
 void ltr329alsReportAll(void) ;
 
-struct rule_t ;
+struct rule_t;
 int	ltr329alsConfigMode (struct rule_t *, int Xcur, int Xmax);
 
-struct epw_t ;
+struct epw_t;
 int	ltr329alsReadHdlr(epw_t * psEWP);
 
 #ifdef __cplusplus
