@@ -7,6 +7,7 @@
 #include "ltr329als.h"
 #include "endpoints.h"
 #include "printfx.h"
+#include "rules.h"
 #include "syslog.h"
 #include "systiming.h"
 #include "x_errors_events.h"
