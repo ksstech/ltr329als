@@ -4,6 +4,7 @@
  */
 
 #include "hal_variables.h"
+#if (halHAS_LTR329ALS > 0)
 #include "ltr329als.h"
 #include "endpoints.h"
 #include "printfx.h"
@@ -177,3 +178,4 @@ void ltr329alsReportAll(void) {
 			sLTR329ALS.Reg.status.valid, sLTR329ALS.Reg.status.gain,
 			sLTR329ALS.Reg.status.intr, sLTR329ALS.Reg.status.data);
 }
+#endif
