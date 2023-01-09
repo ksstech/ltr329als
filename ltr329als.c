@@ -3,7 +3,7 @@
  * Copyright (c) 2022 Andre M. Maree / KSS Technologies (Pty) Ltd.
  */
 
-#include "hal_variables.h"
+#include "main.h"
 #if (halHAS_LTR329ALS > 0)
 #include "ltr329als.h"
 #include "endpoints.h"

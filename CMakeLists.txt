@@ -4,7 +4,7 @@ set( srcs "ltr329als.c" )
 set( include_dirs "." )
 set( priv_include_dirs )
 set( requires hal_esp32 )
-set( priv_requires hal_esp32 printfx syslog systiming )
+set( priv_requires hal_esp32 main printfx syslog systiming )
 
 idf_component_register(
 	SRCS ${srcs} 
