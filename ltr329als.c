@@ -177,5 +177,8 @@ void ltr329alsReportAll(void) {
 	P("\tSTATUS: 0x%0X  valid=%d  gain=%d  intr=%d  data=%d\r\n", sLTR329ALS.Reg.STATUS,
 			sLTR329ALS.Reg.status.valid, sLTR329ALS.Reg.status.gain,
 			sLTR329ALS.Reg.status.intr, sLTR329ALS.Reg.status.data);
+	#if (ltr329alsI2C_LOGIC == 3)
+	xRtosReportTimer(NULL, sLTR329ALS.th);
+	#endif
 }
 #endif
