@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-#include "hal_i2c.h"
+#include "hal_i2cm.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -125,7 +125,7 @@ int	ltr329alsReConfig(i2c_di_t * psI2C_DI);
 int	ltr329alsDiags(i2c_di_t * psI2C_DI);
 void ltr329alsReportAll(void) ;
 int	ltr329alsConfigMode (struct rule_t *, int Xcur, int Xmax);
-int	ltr329alsReadHdlr(struct epw_t * psEWP);
+int	ltr329alsSense(struct epw_t * psEWP);
 
 #ifdef __cplusplus
 	}

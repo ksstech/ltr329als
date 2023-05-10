@@ -46,17 +46,17 @@ ltr329als_t sLTR329ALS = { 0 };
 // #################################### Local ONLY functions #######################################
 
 int ltr329alsReadReg(uint8_t Reg, uint8_t * pRxBuf) {
-	return halI2C_Queue(sLTR329ALS.psI2C, i2cWR_B, &Reg, sizeof(Reg),
+	return halI2CM_Queue(sLTR329ALS.psI2C, i2cWR_B, &Reg, sizeof(Reg),
 			pRxBuf, sizeof(uint8_t), (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
 }
 
 int ltr329alsWriteReg(uint8_t reg, uint8_t val) {
 	uint8_t u8Buf[2] = { reg, val };
-	return halI2C_Queue(sLTR329ALS.psI2C, i2cW_B, u8Buf, sizeof(u8Buf), NULL, 0, (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
+	return halI2CM_Queue(sLTR329ALS.psI2C, i2cW_B, u8Buf, sizeof(u8Buf), NULL, 0, (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
 }
 
 #if (ltr329alsI2C_LOGIC == 1)		// read and convert in 1 go...
-int	ltr329alsReadHdlr(epw_t * psEWP) {
+int	ltr329alsSense(epw_t * psEWP) {
 	IF_SYSTIMER_START(debugTIMING, stLTR329ALS);
 	for (uint8_t Reg = 0; Reg < 4; ++Reg) {
 		ltr329alsReadReg(Reg+ltr329alsDATA_CH1_0, (uint8_t *) &sLTR329ALS.Reg.ch[Reg]);
