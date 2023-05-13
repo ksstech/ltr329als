@@ -149,7 +149,7 @@ int	ltr329alsConfig(i2c_di_t * psI2C_DI) {
 	ltr329alsReadReg(ltr329alsSTATUS, &sLTR329ALS.Reg.STATUS);
 
 	epw_t * psEWP = &table_work[URI_LTR329ALS];
-	psEWP->var.def = SETDEF_CVAR(0, 0, vtVALUE, cvF32, 1);
+	psEWP->var.def = SETDEF_CVAR(0, 0, vtVALUE, cvF32, 1, 0);
 	psEWP->Tsns = psEWP->Rsns = LTR329ALS_T_SNS;
 	psEWP->uri = URI_LTR329ALS;
 
