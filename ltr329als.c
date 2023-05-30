@@ -46,8 +46,7 @@ ltr329als_t sLTR329ALS = { 0 };
 // #################################### Local ONLY functions #######################################
 
 int ltr329alsReadReg(uint8_t Reg, uint8_t * pRxBuf) {
-	return halI2CM_Queue(sLTR329ALS.psI2C, i2cWR_B, &Reg, sizeof(Reg),
-			pRxBuf, sizeof(uint8_t), (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
+	return halI2CM_Queue(sLTR329ALS.psI2C, i2cWR_B, &Reg, sizeof(Reg), pRxBuf, sizeof(uint8_t), (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
 }
 
 int ltr329alsWriteReg(uint8_t reg, uint8_t val) {
