@@ -165,21 +165,22 @@ int	ltr329alsDiags(i2c_di_t * psI2C_DI) { return erSUCCESS; }
 
 // ######################################### Reporting #############################################
 
-void ltr329alsReportAll(void) {
-	halI2C_DeviceReport(sLTR329ALS.psI2C);
-	P("\tCONTROL: 0x%0X  gain=%d (%dx)  mode=%s\r\n", sLTR329ALS.Reg.CONTROL,
+void ltr329alsReportAll(report_t * psR) {
+	int iRV = halI2C_DeviceReport(psR, sLTR329ALS.psI2C);
+	iRV += wprintfx(psR, "\tCONTROL: 0x%0X  gain=%d (%dx)  mode=%s\r\n", sLTR329ALS.Reg.CONTROL,
 			sLTR329ALS.Reg.control.gain, ltr329Gain[sLTR329ALS.Reg.control.gain],
 			sLTR329ALS.Reg.control.mode ? "Active" : "Standby");
-	P("\tMEAS_RATE: 0x%0X  time=%d (%fmS)  rate=%d (%dmS)\r\n", sLTR329ALS.Reg.MEAS_RATE,
+	iRV += wprintfx(psR, "\tMEAS_RATE: 0x%0X  time=%d (%fmS)  rate=%d (%dmS)\r\n", sLTR329ALS.Reg.MEAS_RATE,
 			sLTR329ALS.Reg.meas_rate.time, ltr329IntgTime[sLTR329ALS.Reg.meas_rate.time]*100.0,
 			sLTR329ALS.Reg.meas_rate.rate, ltr329MeasRate[sLTR329ALS.Reg.meas_rate.rate]);
-	P("\tMANUFAC_ID: 0x%0X  PART=%d  REV=%d\r\n", sLTR329ALS.Reg.MANUFAC_ID,
+	iRV += wprintfx(psR, "\tMANUFAC_ID: 0x%0X  PART=%d  REV=%d\r\n", sLTR329ALS.Reg.MANUFAC_ID,
 			sLTR329ALS.Reg.part_id.part, sLTR329ALS.Reg.part_id.rev);
-	P("\tSTATUS: 0x%0X  valid=%d  gain=%d  intr=%d  data=%d\r\n", sLTR329ALS.Reg.STATUS,
+	iRV += wprintfx(psR, "\tSTATUS: 0x%0X  valid=%d  gain=%d  intr=%d  data=%d\r\n", sLTR329ALS.Reg.STATUS,
 			sLTR329ALS.Reg.status.valid, sLTR329ALS.Reg.status.gain,
 			sLTR329ALS.Reg.status.intr, sLTR329ALS.Reg.status.data);
 	#if (ltr329alsI2C_LOGIC == 3)
-	xRtosReportTimer(NULL, sLTR329ALS.th);
+	iRV += xRtosReportTimer(psR, sLTR329ALS.th);
 	#endif
+	return iRV;
 }
 #endif

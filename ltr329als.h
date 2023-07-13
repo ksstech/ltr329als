@@ -123,7 +123,7 @@ int	ltr329alsIdentify(i2c_di_t * psI2C_DI);
 int	ltr329alsConfig(i2c_di_t * psI2C_DI);
 int	ltr329alsReConfig(i2c_di_t * psI2C_DI);
 int	ltr329alsDiags(i2c_di_t * psI2C_DI);
-void ltr329alsReportAll(void) ;
+void ltr329alsReportAll(report_t * psR);
 int	ltr329alsConfigMode (struct rule_t *, int Xcur, int Xmax);
 int	ltr329alsSense(struct epw_t * psEWP);
 
