@@ -125,11 +125,11 @@ int	ltr329alsIdentify(i2c_di_t * psI2C_DI) {
 	sLTR329ALS.psI2C = psI2C_DI;
 	int iRV = ltr329alsReadReg(ltr329alsMANUFAC_ID, &sLTR329ALS.Reg.MANUFAC_ID);
 	IF_EXIT(iRV != erSUCCESS);
-	IF_GOTO(sLTR329ALS.Reg.MANUFAC_ID != 0x05, exit_err);
+	IF_GOTO_L(sLTR329ALS.Reg.MANUFAC_ID != 0x05, exit_err);
 
 	iRV = ltr329alsReadReg(ltr329alsPART_ID, &sLTR329ALS.Reg.PART_ID);
 	IF_EXIT(iRV != erSUCCESS);
-	IF_GOTO(sLTR329ALS.Reg.part_id.part != 0xA, exit_err);
+	IF_GOTO_L(sLTR329ALS.Reg.part_id.part != 0xA, exit_err);
 
 	psI2C_DI->Type		= i2cDEV_LTR329ALS;
 	psI2C_DI->Speed		= i2cSPEED_400;
