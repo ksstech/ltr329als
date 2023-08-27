@@ -165,7 +165,7 @@ int	ltr329alsDiags(i2c_di_t * psI2C_DI) { return erSUCCESS; }
 
 // ######################################### Reporting #############################################
 
-void ltr329alsReportAll(report_t * psR) {
+int ltr329alsReportAll(report_t * psR) {
 	int iRV = halI2C_DeviceReport(psR, sLTR329ALS.psI2C);
 	iRV += wprintfx(psR, "\tCONTROL: 0x%0X  gain=%d (%dx)  mode=%s\r\n", sLTR329ALS.Reg.CONTROL,
 			sLTR329ALS.Reg.control.gain, ltr329Gain[sLTR329ALS.Reg.control.gain],
