@@ -118,10 +118,10 @@ DUMB_STATIC_ASSERT(sizeof(ltr329als_t) == 20);
 struct rule_t;
 struct epw_t;
 
-int	ltr329alsIdentify(i2c_di_t * psI2C_DI);
-int	ltr329alsConfig(i2c_di_t * psI2C_DI);
-int	ltr329alsReConfig(i2c_di_t * psI2C_DI);
-int	ltr329alsDiags(i2c_di_t * psI2C_DI);
+int	ltr329alsIdentify(i2c_di_t * psI2C);
+int	ltr329alsConfig(i2c_di_t * psI2C);
+int	ltr329alsReConfig(i2c_di_t * psI2C);
+int	ltr329alsDiags(i2c_di_t * psI2C);
 int ltr329alsReportAll(report_t * psR);
 int	ltr329alsConfigMode (struct rule_t *, int Xcur, int Xmax);
 int	ltr329alsSense(struct epw_t * psEWP);

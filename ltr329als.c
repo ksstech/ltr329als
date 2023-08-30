@@ -118,11 +118,11 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
  * device reset+register reads to ascertain exact device type
  * @return	erSUCCESS if supported device was detected, if not erFAILURE
  */
-int	ltr329alsIdentify(i2c_di_t * psI2C_DI) {
-	psI2C_DI->TRXmS	= 50;
-	psI2C_DI->CLKuS = 400;
-	psI2C_DI->Test = 1;
-	sLTR329ALS.psI2C = psI2C_DI;
+int	ltr329alsIdentify(i2c_di_t * psI2C) {
+	psI2C->TRXmS = 50;
+	psI2C->CLKuS = 400;
+	psI2C->Test = 1;
+	sLTR329ALS.psI2C = psI2C;
 	int iRV = ltr329alsReadReg(ltr329alsMANUFAC_ID, &sLTR329ALS.Reg.MANUFAC_ID);
 	IF_EXIT(iRV != erSUCCESS);
 	IF_GOTO_L(sLTR329ALS.Reg.MANUFAC_ID != 0x05, exit_err);
@@ -131,37 +131,37 @@ int	ltr329alsIdentify(i2c_di_t * psI2C_DI) {
 	IF_EXIT(iRV != erSUCCESS);
 	IF_GOTO_L(sLTR329ALS.Reg.part_id.part != 0xA, exit_err);
 
-	psI2C_DI->Type		= i2cDEV_LTR329ALS;
-	psI2C_DI->Speed		= i2cSPEED_400;
-	psI2C_DI->DevIdx 	= 0;
+	psI2C->Type = i2cDEV_LTR329ALS;
+	psI2C->Speed = i2cSPEED_400;
+	psI2C->DevIdx = 0;
 	goto exit;
 exit_err:
 	iRV = erFAILURE;
 exit:
-	psI2C_DI->Test = 0;
-	return iRV ;
+	psI2C->Test = 0;
+	return iRV;
 }
 
-int	ltr329alsConfig(i2c_di_t * psI2C_DI) {
-	ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.CONTROL = 0x01);
-	ltr329alsReadReg(ltr329alsMEAS_RATE, &sLTR329ALS.Reg.MEAS_RATE);
-	ltr329alsReadReg(ltr329alsSTATUS, &sLTR329ALS.Reg.STATUS);
-
-	epw_t * psEWP = &table_work[URI_LTR329ALS];
-	psEWP->var.def = SETDEF_CVAR(0, 0, vtVALUE, cvF32, 1, 0);
-	psEWP->Tsns = psEWP->Rsns = LTR329ALS_T_SNS;
-	psEWP->uri = URI_LTR329ALS;
-
+int	ltr329alsConfig(i2c_di_t * psI2C) {
 	#if (ltr329alsI2C_LOGIC == 3)
 	sLTR329ALS.th = xTimerCreateStatic("ltr329als", pdMS_TO_TICKS(5), pdFALSE, NULL, ltr329alsTimerHdlr, &sLTR329ALS.ts);
 	#endif
 	IF_SYSTIMER_INIT(debugTIMING, stLTR329ALS, stMICROS, "LTR329", 500, 4000);
-	return erSUCCESS ;
+	return ltr329alsReConfig(psI2C);
 }
 
-int ltr329alsReConfig(i2c_di_t * psI2C_DI) { return erSUCCESS; }
+int ltr329alsReConfig(i2c_di_t * psI2C) {
+	ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.CONTROL = 0x01);
+	ltr329alsReadReg(ltr329alsMEAS_RATE, &sLTR329ALS.Reg.MEAS_RATE);
+	ltr329alsReadReg(ltr329alsSTATUS, &sLTR329ALS.Reg.STATUS);
+	epw_t * psEWP = &table_work[URI_LTR329ALS];
+	psEWP->var.def = SETDEF_CVAR(0, 0, vtVALUE, cvF32, 1, 0);
+	psEWP->Tsns = psEWP->Rsns = LTR329ALS_T_SNS;
+	psEWP->uri = URI_LTR329ALS;
+	return erSUCCESS;
+}
 
-int	ltr329alsDiags(i2c_di_t * psI2C_DI) { return erSUCCESS; }
+int	ltr329alsDiags(i2c_di_t * psI2C) { return erSUCCESS; }
 
 // ######################################### Reporting #############################################
 
