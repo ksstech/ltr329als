@@ -3,12 +3,12 @@
  * Copyright (c) 2022 Andre M. Maree / KSS Technologies (Pty) Ltd.
  */
 
-#include "hal_config.h"
+#include "hal_variables.h"
 
 #if (halHAS_LTR329ALS > 0)
-#include "ltr329als.h"
+
+#include "hal_i2c_common.h"
 #include "endpoints.h"
-#include "options.h"
 #include "printfx.h"
 #include "rules.h"
 #include "syslog.h"
@@ -158,6 +158,7 @@ int ltr329alsReConfig(i2c_di_t * psI2C) {
 	psEWP->var.def = SETDEF_CVAR(0, 0, vtVALUE, cvF32, 1, 0);
 	psEWP->Tsns = psEWP->Rsns = LTR329ALS_T_SNS;
 	psEWP->uri = URI_LTR329ALS;
+	xRtosSetDevice(devMASK_LTR329ALS);
 	return erSUCCESS;
 }
 
