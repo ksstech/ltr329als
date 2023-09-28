@@ -45,11 +45,6 @@ ltr329als_t sLTR329ALS = { 0 };
 
 // #################################### Local ONLY functions #######################################
 
-int ltr329alsWriteReg(uint8_t reg, uint8_t val) {
-	uint8_t u8Buf[2] = { reg, val };
-	return halI2C_Queue(sLTR329ALS.psI2C, i2cW_B, u8Buf, sizeof(u8Buf), NULL, 0, (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
-}
-
 #if (ltr329alsI2C_LOGIC == 1)		// read and convert in 1 go...
 int	ltr329alsSense(epw_t * psEWP) {
 int ltr329alsReadReg(u8_t Reg, u8_t * pRxBuf) {
@@ -109,6 +104,12 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
 	sLTR329ALS.Reg.meas_rate.time = time;
 	sLTR329ALS.Reg.meas_rate.rate = rate;
 	return ltr329alsWriteReg(ltr329alsMEAS_RATE, sLTR329ALS.Reg.MEAS_RATE);
+int ltr329alsWriteReg(u8_t reg, u8_t val) {
+	u8_t u8Buf[2] = { [0] = reg, [1] = val };
+	IF_SYSTIMER_START(debugTIMING, stLTR329ALS);
+	int iRV = halI2C_Queue(sLTR329ALS.psI2C, i2cW_B, u8Buf, sizeof(u8Buf), NULL, 0, (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
+	IF_SYSTIMER_STOP(debugTIMING, stLTR329ALS);
+	return iRV;
 }
 
 // ################### Identification, Diagnostics & Configuration functions #######################
