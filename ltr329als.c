@@ -119,47 +119,55 @@ int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
  * @return	erSUCCESS if supported device was detected, if not erFAILURE
  */
 int	ltr329alsIdentify(i2c_di_t * psI2C) {
-	psI2C->TRXmS = 50;
-	psI2C->CLKuS = 400;
-	psI2C->Test = 1;
 	sLTR329ALS.psI2C = psI2C;
-	int iRV = ltr329alsReadReg(ltr329alsMANUFAC_ID, &sLTR329ALS.Reg.MANUFAC_ID);
-	IF_EXIT(iRV != erSUCCESS);
-	IF_GOTO_L(sLTR329ALS.Reg.MANUFAC_ID != 0x05, exit_err);
-
-	iRV = ltr329alsReadReg(ltr329alsPART_ID, &sLTR329ALS.Reg.PART_ID);
-	IF_EXIT(iRV != erSUCCESS);
-	IF_GOTO_L(sLTR329ALS.Reg.part_id.part != 0xA, exit_err);
-
+	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(0, &sLTR329ALS.psI2C, sizeof(i2c_di_t *), ESP_CPU_WATCHPOINT_STORE));
 	psI2C->Type = i2cDEV_LTR329ALS;
 	psI2C->Speed = i2cSPEED_400;
-	psI2C->DevIdx = 0;
-	goto exit;
-exit_err:
-	iRV = erFAILURE;
-exit:
+	psI2C->TObus = 25;
+	psI2C->Test = 1;
+	int iRV = ltr329alsReadReg(ltr329alsMANUFAC_ID, &sLTR329ALS.Reg.MANUFAC_ID);
+	if (iRV < erSUCCESS) goto exit;
+	if (sLTR329ALS.Reg.MANUFAC_ID != 0x05) goto err_whoami;
+
+	iRV = ltr329alsReadReg(ltr329alsPART_ID, &sLTR329ALS.Reg.PART_ID);
+	if (iRV < erSUCCESS) goto exit;
+	if (sLTR329ALS.Reg.part_id.part != 0xA) goto err_whoami;
+	// all OK, configure HW done
+	psI2C->IDok = 1;
 	psI2C->Test = 0;
+	goto exit;
+err_whoami:
+	iRV = erINV_WHOAMI;
+exit:
+	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(1, sLTR329ALS.psI2C, sizeof(i2c_di_t), ESP_CPU_WATCHPOINT_STORE));
 	return iRV;
 }
 
 int	ltr329alsConfig(i2c_di_t * psI2C) {
-	#if (ltr329alsI2C_LOGIC == 3)
-	sLTR329ALS.th = xTimerCreateStatic("ltr329als", pdMS_TO_TICKS(5), pdFALSE, NULL, ltr329alsTimerHdlr, &sLTR329ALS.ts);
-	#endif
-	IF_SYSTIMER_INIT(debugTIMING, stLTR329ALS, stMICROS, "LTR329", 500, 4000);
-	return ltr329alsReConfig(psI2C);
-}
+	if (!psI2C->IDok) return erINV_STATE;
 
-int ltr329alsReConfig(i2c_di_t * psI2C) {
-	ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.CONTROL = 0x01);
-	ltr329alsReadReg(ltr329alsMEAS_RATE, &sLTR329ALS.Reg.MEAS_RATE);
-	ltr329alsReadReg(ltr329alsSTATUS, &sLTR329ALS.Reg.STATUS);
-	epw_t * psEWP = &table_work[URI_LTR329ALS];
-	psEWP->var.def = SETDEF_CVAR(0, 0, vtVALUE, cvF32, 1, 0);
-	psEWP->Tsns = psEWP->Rsns = LTR329ALS_T_SNS;
-	psEWP->uri = URI_LTR329ALS;
-	xRtosSetDevice(devMASK_LTR329ALS);
-	return erSUCCESS;
+	ESP_ERROR_CHECK(esp_cpu_clear_watchpoint(1));
+	psI2C->CFGok = 0;
+	int iRV = ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.CONTROL = 0x01);
+	if (iRV < erSUCCESS) goto exit;
+
+	if (iRV > erFAILURE) ltr329alsReadReg(ltr329alsMEAS_RATE, &sLTR329ALS.Reg.MEAS_RATE);
+	if (iRV < erSUCCESS) goto exit;
+
+	if (iRV > erFAILURE) ltr329alsReadReg(ltr329alsSTATUS, &sLTR329ALS.Reg.STATUS);
+	if (iRV < erSUCCESS) goto exit;
+
+	// once off init....
+	if (!psI2C->CFGerr) {
+		IF_SYSTIMER_INIT(debugTIMING, stLTR329ALS, stMICROS, "LTR329", 500, 4000);
+		#if (ltr329alsI2C_LOGIC == 3)
+		sLTR329ALS.th = xTimerCreateStatic("ltr329als", pdMS_TO_TICKS(5), pdFALSE, NULL, ltr329alsTimerHdlr, &sLTR329ALS.ts);
+		#endif
+	}
+	psI2C->CFGok = 1;
+exit:
+	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(1, sLTR329ALS.psI2C, sizeof(i2c_di_t), ESP_CPU_WATCHPOINT_STORE));
+	return iRV;
 }
 
 int	ltr329alsDiags(i2c_di_t * psI2C) { return erSUCCESS; }
