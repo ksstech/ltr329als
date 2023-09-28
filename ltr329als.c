@@ -28,7 +28,6 @@
 // #################################### SI7006/13/20/21 Addresses ##################################
 
 #define	ltr329alsADDR0				0x60
-#define	LTR329ALS_T_SNS				1000
 
 // ################################ Forward function declaration ###################################
 
@@ -45,65 +44,13 @@ ltr329als_t sLTR329ALS = { 0 };
 
 // #################################### Local ONLY functions #######################################
 
-#if (ltr329alsI2C_LOGIC == 1)		// read and convert in 1 go...
-int	ltr329alsSense(epw_t * psEWP) {
 int ltr329alsReadReg(u8_t Reg, u8_t * pRxBuf) {
 	IF_SYSTIMER_START(debugTIMING, stLTR329ALS);
-	for (uint8_t Reg = 0; Reg < 4; ++Reg) {
-		ltr329alsReadReg(Reg+ltr329alsDATA_CH1_0, (uint8_t *) &sLTR329ALS.Reg.ch[Reg]);
-	}
 	int iRV = halI2C_Queue(sLTR329ALS.psI2C, i2cWR_B, &Reg, sizeof(Reg), pRxBuf, sizeof(uint8_t), (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
 	IF_SYSTIMER_STOP(debugTIMING, stLTR329ALS);
-//	P("ltr329als  [ %-'B ]\r\n", 4, sLTR329ALS.Reg.ch);
-	x64_t X64;
-	// Convert & update pressure/altitude sensor
-	uint16_t data_ch0, data_ch1;
-	data_ch0 = (sLTR329ALS.Reg.ch0[1] << 8) | sLTR329ALS.Reg.ch0[0];
-	data_ch1 = (sLTR329ALS.Reg.ch1[1] << 8) | sLTR329ALS.Reg.ch1[0];
-	if (data_ch0 + data_ch1 > 0) {
-		float ratio = data_ch1 / (data_ch0 + data_ch1);
-		X64.x32[0].f32 = (ratio < 0.45) ? (1.7743 * data_ch0 + 1.1059 * data_ch1)
-		    : (ratio >= 0.45 && ratio < 0.64) ? (4.2785 * data_ch0 - 1.9548 * data_ch1)
-		    : (ratio >= 0.64 && ratio < 0.85) ? (0.5926 * data_ch0 + 0.1185 * data_ch1) : 0;
-		X64.x32[0].f32 /= (ltr329Gain[sLTR329ALS.Reg.control.gain] * ltr329IntgTime[sLTR329ALS.Reg.meas_rate.time]);
-	} else {
-		X64.x32[0].f32 = 0;
-	}
-	vCV_SetValueRaw(&table_work[URI_LTR329ALS].var, X64);
-	return erSUCCESS;
 	return iRV;
 }
-#elif (ltr329alsI2C_LOGIC == 2)		// clock stretching
 
-	#error "Not supported"
-
-#elif (ltr329alsI2C_LOGIC == 3)		// 3 step read -> wait -> convert
-
-	#error "Not supported"
-
-#endif
-
-// ################################ Rules configuration support ####################################
-
-int	ltr329alsConfigMode (struct rule_t * psR, int Xcur, int Xmax) {
-	// mode /ltr329als idx gain time rate
-	uint8_t	AI = psR->ActIdx;
-	int gain = psR->para.x32[AI][0].i32;
-	int time = psR->para.x32[AI][1].i32;
-	int rate = psR->para.x32[AI][2].i32;
-	IF_P(debugTRACK && ioB1GET(dbgMode), "mode 'LTR329ALS' Xcur=%d Xmax=%d gain=%d time=%d rate=%d\r\n", Xcur, Xmax, gain, time, rate);
-
-	if (OUTSIDE(0, gain, 7) ||
-		OUTSIDE(0, time, 7) ||
-		OUTSIDE(0, rate, 7) ||
-		gain==4 || gain==5) {
-		RETURN_MX("Invalid gain / time / rate specified", erINV_PARA);
-	}
-	int iRV = ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.control.gain = gain);
-	IF_RETURN_X(iRV != erSUCCESS, iRV);
-	sLTR329ALS.Reg.meas_rate.time = time;
-	sLTR329ALS.Reg.meas_rate.rate = rate;
-	return ltr329alsWriteReg(ltr329alsMEAS_RATE, sLTR329ALS.Reg.MEAS_RATE);
 int ltr329alsWriteReg(u8_t reg, u8_t val) {
 	u8_t u8Buf[2] = { [0] = reg, [1] = val };
 	IF_SYSTIMER_START(debugTIMING, stLTR329ALS);
