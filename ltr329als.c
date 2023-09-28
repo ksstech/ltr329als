@@ -45,10 +45,6 @@ ltr329als_t sLTR329ALS = { 0 };
 
 // #################################### Local ONLY functions #######################################
 
-int ltr329alsReadReg(uint8_t Reg, uint8_t * pRxBuf) {
-	return halI2C_Queue(sLTR329ALS.psI2C, i2cWR_B, &Reg, sizeof(Reg), pRxBuf, sizeof(uint8_t), (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
-}
-
 int ltr329alsWriteReg(uint8_t reg, uint8_t val) {
 	uint8_t u8Buf[2] = { reg, val };
 	return halI2C_Queue(sLTR329ALS.psI2C, i2cW_B, u8Buf, sizeof(u8Buf), NULL, 0, (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
@@ -56,10 +52,12 @@ int ltr329alsWriteReg(uint8_t reg, uint8_t val) {
 
 #if (ltr329alsI2C_LOGIC == 1)		// read and convert in 1 go...
 int	ltr329alsSense(epw_t * psEWP) {
+int ltr329alsReadReg(u8_t Reg, u8_t * pRxBuf) {
 	IF_SYSTIMER_START(debugTIMING, stLTR329ALS);
 	for (uint8_t Reg = 0; Reg < 4; ++Reg) {
 		ltr329alsReadReg(Reg+ltr329alsDATA_CH1_0, (uint8_t *) &sLTR329ALS.Reg.ch[Reg]);
 	}
+	int iRV = halI2C_Queue(sLTR329ALS.psI2C, i2cWR_B, &Reg, sizeof(Reg), pRxBuf, sizeof(uint8_t), (i2cq_p1_t) NULL, (i2cq_p2_t) NULL);
 	IF_SYSTIMER_STOP(debugTIMING, stLTR329ALS);
 //	P("ltr329als  [ %-'B ]\r\n", 4, sLTR329ALS.Reg.ch);
 	x64_t X64;
@@ -78,6 +76,7 @@ int	ltr329alsSense(epw_t * psEWP) {
 	}
 	vCV_SetValueRaw(&table_work[URI_LTR329ALS].var, X64);
 	return erSUCCESS;
+	return iRV;
 }
 #elif (ltr329alsI2C_LOGIC == 2)		// clock stretching
 
