@@ -3,12 +3,12 @@
  * Copyright (c) 2022 Andre M. Maree / KSS Technologies (Pty) Ltd.
  */
 
-#include "hal_variables.h"
+#include "hal_config.h"
 
 #if (halHAS_LTR329ALS > 0)
-
 #include "hal_i2c_common.h"
 #include "endpoints.h"
+#include "ltr329als.h"
 #include "printfx.h"
 #include "rules.h"
 #include "syslog.h"
@@ -35,9 +35,9 @@
 
 // ######################################### Constants #############################################
 
-const uint8_t ltr329Gain[8] = { 1, 2, 4, 8, 0, 0, 48, 96 };
-const float ltr329IntgTime[8] = { 1, 0.5, 2, 4, 1.5, 2.5, 3, 3.5 };
-const uint16_t ltr329MeasRate[8] = { 50, 100, 200, 500, 1000, 2000, 2000, 2000 };
+const u8_t ltr329Gain[8] = { 1, 2, 4, 8, 0, 0, 48, 96 };
+const f32_t ltr329IntgTime[8] = { 1, 0.5, 2, 4, 1.5, 2.5, 3, 3.5 };
+const u16_t ltr329MeasRate[8] = { 50, 100, 200, 500, 1000, 2000, 2000, 2000 };
 
 // ###################################### Local variables ##########################################
 
@@ -184,4 +184,5 @@ int ltr329alsReportAll(report_t * psR) {
 	#endif
 	return iRV;
 }
+
 #endif
