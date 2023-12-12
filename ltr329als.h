@@ -5,7 +5,7 @@
 #pragma once
 
 #ifdef __cplusplus
-	extern "C" {
+extern "C" {
 #endif
 
 // ########################################### Macros ##############################################
@@ -123,5 +123,5 @@ struct report_t;
 int ltr329alsReportAll(struct report_t * psR);
 
 #ifdef __cplusplus
-	}
+}
 #endif
