@@ -1,5 +1,5 @@
 /*
- * ltr329als.h - Copyright (c) 2022-23 Andre M. Maree/KSS Technologies (Pty) Ltd.
+ * ltr329als.h - Copyright (c) 2022-24 Andre M. Maree/KSS Technologies (Pty) Ltd.
  */
 
 #pragma once
