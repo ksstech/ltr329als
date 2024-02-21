@@ -110,7 +110,7 @@ int	ltr329alsConfig(i2c_di_t * psI2C) {
 	}
 	psI2C->CFGok = 1;
 exit:
-	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(1, sLTR329ALS.psI2C, sizeof(i2c_di_t), ESP_CPU_WATCHPOINT_STORE));
+//	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(1, sLTR329ALS.psI2C, sizeof(i2c_di_t), ESP_CPU_WATCHPOINT_STORE));
 	return iRV;
 }
 
