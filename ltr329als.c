@@ -1,6 +1,6 @@
 // ltr329als.c - Copyright (c) 2022-24 Andre M. Maree / KSS Technologies (Pty) Ltd.
 
-#include "hal_config.h"
+#include "hal_platform.h"
 
 #if (HAL_LTR329ALS > 0)
 #include "hal_i2c_common.h"
