@@ -64,7 +64,7 @@ int ltr329alsWriteReg(u8_t reg, u8_t val) {
  */
 int	ltr329alsIdentify(i2c_di_t * psI2C) {
 	sLTR329ALS.psI2C = psI2C;
-	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(0, &sLTR329ALS.psI2C, sizeof(i2c_di_t *), ESP_CPU_WATCHPOINT_STORE));
+//	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(0, &sLTR329ALS.psI2C, sizeof(i2c_di_t *), ESP_CPU_WATCHPOINT_STORE));
 	psI2C->Type = i2cDEV_LTR329ALS;
 	psI2C->Speed = i2cSPEED_400;
 	psI2C->TObus = 25;
@@ -83,14 +83,14 @@ int	ltr329alsIdentify(i2c_di_t * psI2C) {
 err_whoami:
 	iRV = erINV_WHOAMI;
 exit:
-	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(1, sLTR329ALS.psI2C, sizeof(i2c_di_t), ESP_CPU_WATCHPOINT_STORE));
+//	ESP_ERROR_CHECK(esp_cpu_set_watchpoint(1, sLTR329ALS.psI2C, sizeof(i2c_di_t), ESP_CPU_WATCHPOINT_STORE));
 	return iRV;
 }
 
 int	ltr329alsConfig(i2c_di_t * psI2C) {
 	if (!psI2C->IDok) return erINV_STATE;
 
-	ESP_ERROR_CHECK(esp_cpu_clear_watchpoint(1));
+//	ESP_ERROR_CHECK(esp_cpu_clear_watchpoint(1));
 	psI2C->CFGok = 0;
 	int iRV = ltr329alsWriteReg(ltr329alsCONTR, sLTR329ALS.Reg.CONTROL = 0x01);
 	if (iRV < erSUCCESS) goto exit;
