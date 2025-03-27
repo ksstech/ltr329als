@@ -6,7 +6,7 @@
 #include "hal_i2c_common.h"
 #include "endpoints.h"
 #include "ltr329als.h"
-#include "printfx.h"
+#include "report.h"
 #include "rules.h"
 #include "syslog.h"
 #include "systiming.h"
